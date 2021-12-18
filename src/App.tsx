@@ -1,11 +1,10 @@
 import React from 'react'
+import { Game } from './views/Game'
 
 function App() {
 	return (
 		<div className="App">
-			<header className="App-header">
-				<p>Hra Lora</p>
-			</header>
+			<Game title="GaME" />
 		</div>
 	)
 }
