@@ -1,19 +1,23 @@
 import React from 'react'
-import { Card } from '../types'
+import { selectCards } from '../store/cardsSlice'
+import { useAppSelector } from '../store/hooks'
 
 interface DeckOpponentProps {
-	cards: Card[]
+	opponentIndex: number
 }
 
 const CARD_BACK_SRC = '/assets/cardsmini/back.jpg'
 
-export const DeckOpponent = ({ cards }: DeckOpponentProps) => {
+export const DeckOpponent = ({ opponentIndex }: DeckOpponentProps) => {
+	const cards = useAppSelector(selectCards)
 	return (
 		<div className="card-wrapper">
 			<div className="player-name">
-				<h5>villainsNames[villain] (currentScore[villain])</h5>
+				<h5>
+					villainsNames[{opponentIndex}] (currentScore[{opponentIndex}])
+				</h5>
 			</div>
-			{cards.map(card => (
+			{cards?.[opponentIndex].map(card => (
 				<img
 					key={card.id}
 					src={CARD_BACK_SRC}

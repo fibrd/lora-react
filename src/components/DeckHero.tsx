@@ -1,18 +1,16 @@
 import React from 'react'
-import { Card } from '../types'
+import { selectCards } from '../store/cardsSlice'
+import { useAppSelector } from '../store/hooks'
 
-interface DeckHeroProps {
-	cards: Card[]
-}
-
-export const DeckHero = ({ cards }: DeckHeroProps) => {
+export const DeckHero = () => {
+	const cards = useAppSelector(selectCards)
 	return (
 		<div className="hero-wrapper">
 			<div className="player-name">
 				<h5>playerName (heroScore)</h5>
 			</div>
 			<div className="card-wrapper">
-				{cards.map(card => (
+				{cards?.[3].map(card => (
 					<img key={card.src} className="card" src={card.src} alt={card.name} />
 				))}
 			</div>
