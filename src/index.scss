@@ -24,6 +24,10 @@ code {
 	box-shadow: 1px 1px 2px 2px #ccc;
 	border-radius: 4px;
 
+	&--hero {
+		cursor: pointer;
+	}
+
 	&--opponent {
 		@for $i from 1 through 8 {
 			&:nth-child(#{$i}) {
@@ -31,6 +35,14 @@ code {
 				transform: translateX(100% - $i * 90%) rotateZ($i * 2deg - 8deg);
 			}
 		}
+	}
+
+	&--highlighted {
+		box-shadow: 0px 0px 4px 4px rgba(37, 114, 1, 0.4);
+	}
+
+	&--highlighted-red {
+		box-shadow: 0px 0px 4px 4px rgba(138, 7, 7, 0.6);
 	}
 }
 

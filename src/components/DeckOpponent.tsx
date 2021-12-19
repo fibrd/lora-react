@@ -2,6 +2,7 @@ import React, { useMemo } from 'react'
 import { selectCards } from '../store/slices/cardsSlice'
 import { useAppSelector } from '../store/hooks'
 import { selectCurrentScore } from '../store/slices/scoreSlice'
+import clsx from 'clsx'
 
 interface DeckOpponentProps {
 	opponentIndex: number
@@ -16,6 +17,9 @@ export const DeckOpponent = ({ opponentIndex }: DeckOpponentProps) => {
 		() => (cards ? cards[opponentIndex] : []),
 		[cards, opponentIndex]
 	)
+	const cardClassName = clsx('card', 'card--opponent', {
+		'card--highlighted': opponentIndex === 1,
+	})
 	return (
 		<div className="opponent-wrapper">
 			<div className="player-name">
@@ -29,7 +33,7 @@ export const DeckOpponent = ({ opponentIndex }: DeckOpponentProps) => {
 						key={card.id}
 						src={CARD_BACK_SRC}
 						alt="cardBack"
-						className="card card--opponent"
+						className={cardClassName}
 					/>
 				))}
 			</div>
