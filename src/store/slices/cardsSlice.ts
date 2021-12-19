@@ -1,8 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { chunk, shuffle } from 'lodash'
-import { Card } from '../types'
-import { getCards } from '../utils'
-import { RootState } from './store'
+import { Card } from '../../types'
+import { getCards } from '../../utils'
+import { RootState } from '../store'
 
 export interface CardsState {
 	cards: Card[][] | null

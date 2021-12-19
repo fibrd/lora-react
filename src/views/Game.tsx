@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { DeckHero } from '../components/DeckHero'
-import { shuffleCards } from '../store/cardsSlice'
+import { shuffleCards } from '../store/slices/cardsSlice'
 import { useAppDispatch } from '../store/hooks'
 import { DeckOpponent } from '../components/DeckOpponent'
 

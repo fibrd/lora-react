@@ -1,9 +1,11 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit'
-import cardsReducer from './cardsSlice'
+import cardsReducer from './slices/cardsSlice'
+import scoreReducer from './slices/scoreSlice'
 
 export const store = configureStore({
 	reducer: {
 		cards: cardsReducer,
+		score: scoreReducer,
 	},
 })
 

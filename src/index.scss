@@ -1,3 +1,9 @@
+$cardWidth: 80px;
+
+* {
+	box-sizing: border-box;
+}
+
 body {
 	margin: 0;
 	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -13,7 +19,7 @@ code {
 }
 
 .card {
-	max-width: 80px;
+	max-width: $cardWidth;
 	height: auto;
 	box-shadow: 1px 1px 2px 2px #ccc;
 	border-radius: 4px;
@@ -21,7 +27,8 @@ code {
 	&--opponent {
 		@for $i from 1 through 8 {
 			&:nth-child(#{$i}) {
-				transform: translateX(100% - $i * 90%);
+				transform-origin: 50% 100%;
+				transform: translateX(100% - $i * 90%) rotateZ($i * 2deg - 8deg);
 			}
 		}
 	}
@@ -32,7 +39,10 @@ code {
 	flex-direction: column;
 	justify-content: space-between;
 	align-items: center;
+	max-width: 1024px;
 	height: 100vh;
+	margin: 0 auto;
+	padding: 1em;
 }
 
 .hero-wrapper {
@@ -47,13 +57,13 @@ code {
 }
 
 .opponent-wrapper {
-	width: calc(100% / 3);
 	overflow-x: hidden;
+	width: calc(100% / 3);
 	text-align: center;
 	&:nth-child(1),
 	&:nth-child(3) {
 		position: relative;
-		top: 50%;
+		top: 25%;
 	}
 }
 
@@ -61,20 +71,50 @@ code {
 	display: flex;
 	flex-wrap: nowrap;
 	position: relative;
-	padding-bottom: 5px;
-	left: calc(50% - 80px);
+	padding-bottom: 50px;
+	left: calc(50% - $cardWidth);
 }
 
 @media screen and (max-width: 960px) {
+	$cardWidth: 50px;
+	$cardHeroZoom: 1.2;
+
 	.App {
 		font-size: 80%;
 	}
 
+	.game-area {
+		max-height: 667px;
+	}
+
 	.card {
-		width: 60px;
+		width: $cardWidth;
+		&--hero {
+			width: $cardWidth * $cardHeroZoom;
+		}
 	}
 
 	.deck-opponent {
-		left: calc(50% - 60px);
+		left: calc(50% - $cardWidth);
+	}
+}
+
+@media screen and (max-width: 360px) {
+	$cardWidth: 40px;
+	$cardHeroZoom: 1.4;
+
+	.App {
+		font-size: 60%;
+	}
+
+	.card {
+		width: $cardWidth;
+		&--hero {
+			width: $cardWidth * $cardHeroZoom;
+		}
+	}
+
+	.deck-opponent {
+		left: calc(50% - $cardWidth);
 	}
 }
