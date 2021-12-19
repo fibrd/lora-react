@@ -4,11 +4,13 @@ import { shuffleCards } from '../store/slices/cardsSlice'
 import { useAppDispatch } from '../store/hooks'
 import { DeckOpponent } from '../components/DeckOpponent'
 import { Board } from '../components/Board'
+import { setPlayerNames } from '../store/slices/nameSlice'
 
 export const Game = () => {
 	const dispatch = useAppDispatch()
 	useEffect(() => {
 		dispatch(shuffleCards())
+		dispatch(setPlayerNames())
 	}, [dispatch])
 	return (
 		<div className="game-area">
