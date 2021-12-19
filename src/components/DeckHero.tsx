@@ -3,6 +3,7 @@ import React, { useMemo } from 'react'
 import { removeCard, selectCards } from '../store/slices/cardsSlice'
 import { useAppDispatch, useAppSelector } from '../store/hooks'
 import { selectCurrentScore } from '../store/slices/scoreSlice'
+import { Card } from '../types'
 
 export const DeckHero = () => {
 	const dispatch = useAppDispatch()
@@ -17,8 +18,8 @@ export const DeckHero = () => {
 		}
 	}, [cards, isSettingsSorted])
 
-	function handleClick(cardId: number) {
-		dispatch(removeCard({ playerIndex: 3, cardId }))
+	function handleClick(card: Card) {
+		dispatch(removeCard({ playerIndex: 3, card }))
 	}
 
 	return (
@@ -33,7 +34,7 @@ export const DeckHero = () => {
 						className="card card--hero"
 						src={card.src}
 						alt={card.name}
-						onClick={() => handleClick(card.id)}
+						onClick={() => handleClick(card)}
 					/>
 				))}
 			</div>

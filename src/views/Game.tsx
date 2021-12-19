@@ -3,6 +3,7 @@ import { DeckHero } from '../components/DeckHero'
 import { shuffleCards } from '../store/slices/cardsSlice'
 import { useAppDispatch } from '../store/hooks'
 import { DeckOpponent } from '../components/DeckOpponent'
+import { Board } from '../components/Board'
 
 export const Game = () => {
 	const dispatch = useAppDispatch()
@@ -16,6 +17,7 @@ export const Game = () => {
 					<DeckOpponent key={index} opponentIndex={index} />
 				))}
 			</div>
+			<Board />
 			<DeckHero />
 		</div>
 	)
