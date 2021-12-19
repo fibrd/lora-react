@@ -4,21 +4,18 @@ import { shuffleCards } from '../store/cardsSlice'
 import { useAppDispatch } from '../store/hooks'
 import { DeckOpponent } from '../components/DeckOpponent'
 
-interface GameProps {
-	title: string
-}
-
-export const Game = ({ title }: GameProps) => {
+export const Game = () => {
 	const dispatch = useAppDispatch()
 	useEffect(() => {
 		dispatch(shuffleCards())
 	}, [dispatch])
 	return (
-		<div>
-			<h1>{title}</h1>
-			{[0, 1, 2].map(index => (
-				<DeckOpponent key={index} opponentIndex={index} />
-			))}
+		<div className="game-area">
+			<div className="opponents-wrapper">
+				{[0, 1, 2].map(index => (
+					<DeckOpponent key={index} opponentIndex={index} />
+				))}
+			</div>
 			<DeckHero />
 		</div>
 	)

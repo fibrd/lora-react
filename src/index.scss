@@ -13,6 +13,68 @@ code {
 }
 
 .card {
-	max-width: 5em;
+	max-width: 80px;
 	height: auto;
+	box-shadow: 1px 1px 2px 2px #ccc;
+	border-radius: 4px;
+
+	&--opponent {
+		@for $i from 1 through 8 {
+			&:nth-child(#{$i}) {
+				transform: translateX(100% - $i * 90%);
+			}
+		}
+	}
+}
+
+.game-area {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	align-items: center;
+	height: 100vh;
+}
+
+.hero-wrapper {
+	text-align: center;
+}
+
+.opponents-wrapper {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	width: 100%;
+}
+
+.opponent-wrapper {
+	width: calc(100% / 3);
+	overflow-x: hidden;
+	text-align: center;
+	&:nth-child(1),
+	&:nth-child(3) {
+		position: relative;
+		top: 50%;
+	}
+}
+
+.deck-opponent {
+	display: flex;
+	flex-wrap: nowrap;
+	position: relative;
+	padding-bottom: 5px;
+	left: calc(50% - 80px);
+}
+
+@media screen and (max-width: 960px) {
+	.App {
+		font-size: 80%;
+	}
+
+	.card {
+		width: 60px;
+	}
+
+	.deck-opponent {
+		left: calc(50% - 60px);
+	}
 }
