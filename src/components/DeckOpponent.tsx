@@ -1,9 +1,9 @@
 import React, { useMemo } from 'react'
 import { selectCards } from '../store/slices/cardsSlice'
 import { useAppSelector } from '../store/hooks'
-import { selectCurrentScore } from '../store/slices/scoreSlice'
+import { selectScore } from '../store/slices/scoreSlice'
 import clsx from 'clsx'
-import { selectPlayerNames } from '../store/slices/nameSlice'
+import { selectName } from '../store/slices/nameSlice'
 
 interface DeckOpponentProps {
 	opponentIndex: number
@@ -12,9 +12,9 @@ interface DeckOpponentProps {
 // const CARD_BACK_SRC = '/assets/cardsmini/back.jpg'
 
 export const DeckOpponent = ({ opponentIndex }: DeckOpponentProps) => {
-	const cards = useAppSelector(selectCards)
-	const playerNames = useAppSelector(selectPlayerNames)
-	const currentScore = useAppSelector(selectCurrentScore)
+	const { cards } = useAppSelector(selectCards)
+	const { playerNames } = useAppSelector(selectName)
+	const { currentScore } = useAppSelector(selectScore)
 	const opponentCards = useMemo(
 		() => (cards ? cards[opponentIndex] : []),
 		[cards, opponentIndex]

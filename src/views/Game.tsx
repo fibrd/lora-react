@@ -14,13 +14,13 @@ import { Card } from '../types'
 import {
 	disableActing,
 	enableActing,
-	selectCanHeroAct,
+	selectCommon,
 } from '../store/slices/commonSlice'
 import { delay } from '../utils'
 
 export const Game = () => {
 	const dispatch = useAppDispatch()
-	const carHeroAct = useAppSelector(selectCanHeroAct)
+	const { canHeroAct } = useAppSelector(selectCommon)
 
 	useEffect(() => {
 		dispatch(shuffleCards())
@@ -35,13 +35,12 @@ export const Game = () => {
 	}
 
 	async function handleHeroClick(card: Card) {
-		if (!carHeroAct) return
+		if (!canHeroAct) return
 
-		dispatch(clearBoard())
 		dispatch(removeCard({ playerIndex: 3, card }))
 		dispatch(disableActing())
 		await allOpponentsAct()
-		await delay(1000)
+		await delay(2000)
 		dispatch(enableActing())
 		dispatch(clearBoard())
 	}

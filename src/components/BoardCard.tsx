@@ -1,7 +1,7 @@
 import clsx from 'clsx'
 import React from 'react'
 import { useAppSelector } from '../store/hooks'
-import { selectBoardCards } from '../store/slices/cardsSlice'
+import { selectCards } from '../store/slices/cardsSlice'
 
 interface BoardCardProps {
 	playerIndex: number
@@ -10,7 +10,7 @@ interface BoardCardProps {
 const CARD_BLANK_SRC = '/assets/cardsmini/blank.jpg'
 
 export const BoardCard = ({ playerIndex }: BoardCardProps) => {
-	const boardCards = useAppSelector(selectBoardCards)
+	const { boardCards } = useAppSelector(selectCards)
 
 	const boardCardSrc = boardCards[playerIndex]?.src || CARD_BLANK_SRC
 	const boardCardClassName = clsx('card', 'card--board', {

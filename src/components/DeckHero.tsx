@@ -2,7 +2,7 @@ import { sortBy } from 'lodash'
 import React, { useMemo } from 'react'
 import { selectCards } from '../store/slices/cardsSlice'
 import { useAppSelector } from '../store/hooks'
-import { selectCurrentScore } from '../store/slices/scoreSlice'
+import { selectScore } from '../store/slices/scoreSlice'
 import { Card } from '../types'
 
 interface DeckHeroProps {
@@ -11,8 +11,8 @@ interface DeckHeroProps {
 
 export const DeckHero = ({ onClick }: DeckHeroProps) => {
 	const isSettingsSorted = true
-	const cards = useAppSelector(selectCards)
-	const currentScore = useAppSelector(selectCurrentScore)
+	const { cards } = useAppSelector(selectCards)
+	const { currentScore } = useAppSelector(selectScore)
 	const heroCards = useMemo(
 		() => (isSettingsSorted ? sortBy(cards[3], ['id']) : cards[3]),
 		[cards, isSettingsSorted]

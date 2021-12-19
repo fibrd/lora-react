@@ -24,6 +24,6 @@ export const commonSlice = createSlice({
 
 export const { disableActing, enableActing } = commonSlice.actions
 
-export const selectCanHeroAct = (state: RootState) => state.common.canHeroAct
+export const selectCommon = (state: RootState) => state.common
 
 export default commonSlice.reducer

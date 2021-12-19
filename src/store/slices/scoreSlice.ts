@@ -45,7 +45,6 @@ export const scoreSlice = createSlice({
 export const { incrementTotalScore, incrementTotalScoreByAmount } =
 	scoreSlice.actions
 
-export const selectTotalScore = (state: RootState) => state.score.totalScore
-export const selectCurrentScore = (state: RootState) => state.score.currentScore
+export const selectScore = (state: RootState) => state.score
 
 export default scoreSlice.reducer
