@@ -1,9 +1,11 @@
+// zajisti casove zdrzeni podle zadaneho parametru v ms
 export function delay(delayTimeInMs = 200) {
 	return new Promise<void>(resolve =>
 		setTimeout(() => resolve(), delayTimeInMs)
 	)
 }
 
+// vrati pole karet pri inicializaci hry
 export function getCards() {
 	return [
 		{
@@ -233,7 +235,7 @@ export function getCards() {
 	]
 }
 
-// list of all possible players names
+// pole vsech dostupnych jmen hracu
 function getListOfNames() {
 	return [
 		'Adam',
@@ -398,22 +400,23 @@ function getListOfNames() {
 		'Zdeňka',
 		'Zuzana',
 		'Žaneta',
+		'Miloš Zeman',
 	]
 }
 
-// generates an array of three random names
+// vygeneruje pole tri nahodnych jmen hracu
 export function getRandomNames(): string[] {
 	const names = getListOfNames()
 	const listNameLen = names.length
 	const randomIndex1 = Math.floor(Math.random() * listNameLen)
 	let randomIndex2 = Math.floor(Math.random() * listNameLen)
-	// each name should be unique
+	// zajisti unikatnost daneho jmena hrace
 	while (randomIndex2 === randomIndex1) {
 		randomIndex2 = Math.floor(Math.random() * listNameLen)
 	}
 
 	let randomIndex3 = Math.floor(Math.random() * listNameLen)
-	// each name should be unique
+	// zajisti unikatnost daneho jmena hrace
 	while (randomIndex3 === randomIndex1 || randomIndex3 === randomIndex2) {
 		randomIndex3 = Math.floor(Math.random() * listNameLen)
 	}

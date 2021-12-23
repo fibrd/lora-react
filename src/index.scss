@@ -32,7 +32,7 @@ code {
 		@for $i from 1 through 8 {
 			&:nth-child(#{$i}) {
 				transform-origin: 50% 100%;
-				transform: translateX(100% - $i * 90%) rotateZ($i * 2deg - 8deg);
+				transform: translateX(100% - $i * 90%) rotateZ($i * 16deg - 8deg);
 			}
 		}
 	}
