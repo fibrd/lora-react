@@ -1,8 +1,20 @@
+import { Card } from '../types'
+
 // zajisti casove zdrzeni podle zadaneho parametru v ms
-export function delay(delayTimeInMs = 200) {
+export function delay(delayTimeInMs = 100) {
 	return new Promise<void>(resolve =>
 		setTimeout(() => resolve(), delayTimeInMs)
 	)
+}
+
+export function isFlushValid(
+	card: Card,
+	playerCards: Card[],
+	initCard: Card
+): boolean {
+	// finds any player's card with flush equals to the initializing one
+	const anyFlushCard = playerCards.find(c => c.flush === initCard.flush)
+	return card.flush === initCard.flush || !anyFlushCard
 }
 
 // vrati pole karet pri inicializaci hry

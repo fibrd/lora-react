@@ -6,7 +6,7 @@ export interface CommonState {
 }
 
 const initialState: CommonState = {
-	canHeroAct: true,
+	canHeroAct: false,
 }
 
 export const commonSlice = createSlice({

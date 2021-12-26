@@ -12,7 +12,7 @@ export interface GameState {
 const initialState: GameState = {
 	mode: 0,
 	round: 0,
-	initPlayer: 3,
+	initPlayer: 0,
 	currentLoser: -1,
 }
 

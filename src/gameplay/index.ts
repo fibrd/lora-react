@@ -131,12 +131,20 @@ function chooseUnfilteredCard(
 }
 
 export function chooseInitCard(playerIndex: number, state: RootState) {
-	const { cards, cardsOut } = state.cards
-	console.log('cardsOut', cardsOut)
+	const { cards, boardCards, cardsOut } = state.cards
 	const playerCards = cards[playerIndex]
 	// Seradi karty vzestupne podle jejich hodnoty
 	const sortedDeck = sortBy(playerCards, ['value'])
-	return sortedDeck[0]
+
+	let i = 0
+	let card = sortedDeck[i]
+	while (
+		isFlushOut(card.flush, sortedDeck, boardCards, cardsOut) &&
+		i < sortedDeck.length
+	) {
+		card = sortedDeck[i++]
+	}
+	return card
 }
 
 export function chooseReactCard(playerIndex: number, state: RootState) {
@@ -165,10 +173,15 @@ export function getCurrentLoser(state: RootState): number {
 	const { initPlayer } = state.game
 	// Karta vynosu
 	const initCard = boardCards[initPlayer]
+	console.log('initCard', initCard)
 
 	const boardEligable = boardCards.filter(c => c.flush === initCard.flush)
 	// ziska nejvyssi hodnotu na boardu
 	const boardMaxValue = Math.max(...boardEligable.map(c => c.value))
 
-	return boardCards.findIndex(c => c.value === boardMaxValue)
+	const highestBoardCard = boardEligable.find(
+		c => c.value === boardMaxValue
+	) as Card
+
+	return boardCards.findIndex(c => c.id === highestBoardCard.id)
 }

@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import { DeckHero } from '../components/DeckHero'
 import {
 	clearBoard,
 	opponentInits,
 	opponentReacts,
 	removeCard,
+	selectCards,
 	shuffleCards,
 } from '../store/slices/cardsSlice'
 import { useAppDispatch, useAppSelector } from '../store/hooks'
@@ -17,7 +18,7 @@ import {
 	enableActing,
 	selectCommon,
 } from '../store/slices/commonSlice'
-import { delay } from '../utils'
+import { delay, isFlushValid } from '../utils'
 import {
 	getLoserIndex,
 	selectGame,
@@ -32,28 +33,25 @@ export const Game = () => {
 	const dispatch = useAppDispatch()
 	// Zda hrac muze provest akci
 	const { canHeroAct } = useAppSelector(selectCommon)
-	const { initPlayer } = useAppSelector(selectGame)
+	const { initPlayer, round } = useAppSelector(selectGame)
+	const { cards, boardCards } = useAppSelector(selectCards)
 
-	useEffect(() => {
-		// Inicializace karet
-		dispatch(shuffleCards())
-		// Nastaveni jmen protihracu pri inicializaci
-		dispatch(setPlayerNames())
-	}, [dispatch])
-
-	async function allOpponentsInit(initPlayerIndex: number) {
-		// calculates villains count to act
-		const opponentsToAct = OPPONENTS_COUNT - initPlayerIndex
-		dispatch(opponentInits(initPlayerIndex))
-		// forces opponents to make their initializing moves
-		for (let i = 1; i < opponentsToAct; i++) {
-			// editting their order based on the initilizing player
-			const marginIndex = (i + initPlayerIndex) % 4
-			await delay()
-			dispatch(opponentReacts(marginIndex))
-		}
-		dispatch(enableActing())
-	}
+	const allOpponentsInit = useCallback(
+		async (initPlayerIndex: number) => {
+			// calculates villains count to act
+			const opponentsToAct = OPPONENTS_COUNT - initPlayerIndex
+			dispatch(opponentInits(initPlayerIndex))
+			// forces opponents to make their initializing moves
+			for (let i = 1; i < opponentsToAct; i++) {
+				// editting their order based on the initilizing player
+				const marginIndex = (i + initPlayerIndex) % 4
+				await delay()
+				dispatch(opponentReacts(marginIndex))
+			}
+			dispatch(enableActing())
+		},
+		[dispatch]
+	)
 
 	// Reakce protihracu
 	async function allOpponentsReact() {
@@ -64,9 +62,25 @@ export const Game = () => {
 		}
 	}
 
+	// MOUNT
+	useEffect(() => {
+		// Inicializace karet
+		dispatch(shuffleCards())
+		// Nastaveni jmen protihracu pri inicializaci
+		dispatch(setPlayerNames())
+		// Vynos protihracu
+		allOpponentsInit(round)
+	}, [dispatch, allOpponentsInit, round])
+
 	// Tah hrace
 	async function handleHeroClick(card: Card) {
+		// Akce zakazana
 		if (!canHeroAct) return
+
+		const heroCards = cards[3]
+		const initCard = boardCards[initPlayer]
+		// Pokud hrac neprizna barvu => return
+		if (initPlayer !== 3 && !isFlushValid(card, heroCards, initCard)) return
 
 		// Odstrani danou kartu z hracova balicku a priradi do boardu
 		dispatch(removeCard({ playerIndex: 3, card }))
@@ -82,6 +96,18 @@ export const Game = () => {
 		await delay(2000)
 		// Vymaze karty z boardu
 		dispatch(clearBoard())
+
+		// konec hry
+		if (heroCards.length === 1) {
+			dispatch(shuffleCards())
+			dispatch(setInitPlayer({ playerIndex: round }))
+			if (round === 3) {
+				dispatch(enableActing())
+			} else {
+				allOpponentsInit(round)
+			}
+			return
+		}
 
 		if (loserIndex === 3) {
 			// Opetovne umozni moznost akce hrace
