@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { chunk, shuffle } from 'lodash'
-import { chooseCard } from '../../gameplay'
+import { chooseInitCard, chooseReactCard } from '../../gameplay'
 import { Card } from '../../types'
 import { getCards } from '../../utils'
 import { AppThunk, RootState } from '../store'
@@ -46,10 +46,18 @@ export const { shuffleCards, removeCard, clearBoard } = cardsSlice.actions
 
 export const selectCards = (state: RootState) => state.cards
 
-export const opponentActs =
+export const opponentReacts =
 	(playerIndex: number): AppThunk =>
 	(dispatch, getState) => {
-		const card = chooseCard(playerIndex, getState())
+		const card = chooseReactCard(playerIndex, getState())
+
+		dispatch(removeCard({ playerIndex, card }))
+	}
+
+export const opponentInits =
+	(playerIndex: number): AppThunk =>
+	(dispatch, getState) => {
+		const card = chooseInitCard(playerIndex, getState())
 
 		dispatch(removeCard({ playerIndex, card }))
 	}

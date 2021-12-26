@@ -4,6 +4,7 @@ import { useAppSelector } from '../store/hooks'
 import { selectScore } from '../store/slices/scoreSlice'
 import clsx from 'clsx'
 import { selectName } from '../store/slices/nameSlice'
+import { selectGame } from '../store/slices/gameSlice'
 
 interface DeckOpponentProps {
 	opponentIndex: number
@@ -15,12 +16,13 @@ export const DeckOpponent = ({ opponentIndex }: DeckOpponentProps) => {
 	const { cards } = useAppSelector(selectCards)
 	const { playerNames } = useAppSelector(selectName)
 	const { currentScore } = useAppSelector(selectScore)
+	const { initPlayer } = useAppSelector(selectGame)
 	const opponentCards = useMemo(
 		() => (cards ? cards[opponentIndex] : []),
 		[cards, opponentIndex]
 	)
 	const cardClassName = clsx('card', 'card--opponent', {
-		'card--highlighted': opponentIndex === 1,
+		'card--highlighted': opponentIndex === initPlayer,
 	})
 	return (
 		<div className="opponent-wrapper">
