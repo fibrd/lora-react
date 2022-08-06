@@ -2,8 +2,6 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { DeckHero } from '../components/DeckHero'
 import {
 	clearBoard,
-	opponentInits,
-	opponentReacts,
 	removeCard,
 	selectCards,
 	shuffleCards,
@@ -13,7 +11,7 @@ import { DeckOpponent } from '../components/DeckOpponent'
 import { Board } from '../components/Board'
 import { Card } from '../types'
 import { delay, isFlushValid } from '../utils'
-import { getCurrentLoser } from '../gameplay'
+import { chooseInitCard, chooseReactCard, getCurrentLoser } from '../gameplay'
 
 const OPPONENTS_COUNT = 3
 
@@ -23,12 +21,12 @@ interface GameProps {
 
 export const Game = ({ playerNames }: GameProps) => {
 	const dispatch = useAppDispatch()
-	const { cards, boardCards } = useAppSelector(selectCards)
+	const { cards, boardCards, cardsOut } = useAppSelector(selectCards)
 	// Zda hrac muze provest akci
-	const [canHeroAct, setCanHeroAct] = useState(false)
+	const [canHeroAct, setCanHeroAct] = useState(true)
 	const [initPlayer, setInitPlayer] = useState(0)
 	const [currentLoser, setCurrentLoser] = useState<null | number>(null)
-	const [round, setRound] = useState(0)
+	const [round] = useState(0)
 	const [currentScore, setCurrentScore] = useState(
 		new Map([
 			[0, 0],
@@ -42,17 +40,26 @@ export const Game = ({ playerNames }: GameProps) => {
 		async (initPlayerIndex: number) => {
 			// calculates villains count to act
 			const opponentsToAct = OPPONENTS_COUNT - initPlayerIndex
-			dispatch(opponentInits(initPlayerIndex))
+			const card = chooseInitCard(initPlayerIndex, cards, boardCards, cardsOut)
+			dispatch(removeCard({ playerIndex: initPlayerIndex, card }))
+
 			// forces opponents to make their initializing moves
 			for (let i = 1; i < opponentsToAct; i++) {
 				// editting their order based on the initilizing player
 				const marginIndex = (i + initPlayerIndex) % 4
 				await delay()
-				dispatch(opponentReacts(marginIndex))
+				const card = chooseReactCard(
+					marginIndex,
+					cards,
+					boardCards,
+					cardsOut,
+					initPlayer
+				)
+				dispatch(removeCard({ playerIndex: marginIndex, card }))
 			}
 			setCanHeroAct(true)
 		},
-		[dispatch]
+		[dispatch, initPlayer]
 	)
 
 	// Reakce protihracu
@@ -60,7 +67,8 @@ export const Game = ({ playerNames }: GameProps) => {
 		const opponentsToReact = [0, 1, 2].slice(0, initPlayer)
 		for (const i of opponentsToReact) {
 			await delay()
-			dispatch(opponentReacts(i))
+			const card = chooseReactCard(i, cards, boardCards, cardsOut, initPlayer)
+			dispatch(removeCard({ playerIndex: i, card }))
 		}
 	}
 
@@ -132,6 +140,7 @@ export const Game = ({ playerNames }: GameProps) => {
 						key={index}
 						playerNames={playerNames}
 						opponentIndex={index}
+						initPlayer={initPlayer}
 						currentScore={currentScore}
 					/>
 				))}
@@ -139,6 +148,7 @@ export const Game = ({ playerNames }: GameProps) => {
 			<Board currentLoser={currentLoser} />
 			<DeckHero
 				currentHeroScore={currentScore.get(3) ?? 0}
+				initPlayer={initPlayer}
 				onClick={handleHeroClick}
 			/>
 		</div>

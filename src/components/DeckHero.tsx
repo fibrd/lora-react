@@ -3,18 +3,21 @@ import React, { useMemo } from 'react'
 import { selectCards } from '../store/slices/cardsSlice'
 import { useAppSelector } from '../store/hooks'
 import { Card } from '../types'
-import { selectGame } from '../store/slices/gameSlice'
 import clsx from 'clsx'
 
 interface DeckHeroProps {
 	currentHeroScore: number
+	initPlayer: number
 	onClick: (card: Card) => void
 }
 
-export const DeckHero = ({ currentHeroScore, onClick }: DeckHeroProps) => {
+export const DeckHero = ({
+	currentHeroScore,
+	initPlayer,
+	onClick,
+}: DeckHeroProps) => {
 	const isSettingsSorted = true
 	const { cards } = useAppSelector(selectCards)
-	const { initPlayer } = useAppSelector(selectGame)
 	const heroCards = useMemo(
 		() => (isSettingsSorted ? sortBy(cards[3], ['id']) : cards[3]),
 		[cards, isSettingsSorted]

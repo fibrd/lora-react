@@ -2,11 +2,11 @@ import React, { useMemo } from 'react'
 import { selectCards } from '../store/slices/cardsSlice'
 import { useAppSelector } from '../store/hooks'
 import clsx from 'clsx'
-import { selectGame } from '../store/slices/gameSlice'
 
 interface DeckOpponentProps {
 	playerNames: string[]
 	opponentIndex: number
+	initPlayer: number
 	currentScore: Map<number, number>
 }
 
@@ -15,10 +15,10 @@ interface DeckOpponentProps {
 export const DeckOpponent = ({
 	playerNames,
 	opponentIndex,
+	initPlayer,
 	currentScore,
 }: DeckOpponentProps) => {
 	const { cards } = useAppSelector(selectCards)
-	const { initPlayer } = useAppSelector(selectGame)
 	const opponentCards = useMemo(
 		() => (cards ? cards[opponentIndex] : []),
 		[cards, opponentIndex]
