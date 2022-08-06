@@ -1,17 +1,12 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { DeckHero } from '../components/DeckHero'
-import {
-	clearBoard,
-	removeCard,
-	selectCards,
-	shuffleCards,
-} from '../store/slices/cardsSlice'
-import { useAppDispatch, useAppSelector } from '../store/hooks'
+import { useAppDispatch } from '../store/hooks'
 import { DeckOpponent } from '../components/DeckOpponent'
 import { Board } from '../components/Board'
 import { Card } from '../types'
-import { delay, isFlushValid } from '../utils'
+import { delay, getCards, isFlushValid } from '../utils'
 import { chooseInitCard, chooseReactCard, getCurrentLoser } from '../gameplay'
+import { chunk, shuffle } from 'lodash'
 
 const OPPONENTS_COUNT = 3
 
@@ -21,7 +16,9 @@ interface GameProps {
 
 export const Game = ({ playerNames }: GameProps) => {
 	const dispatch = useAppDispatch()
-	const { cards, boardCards, cardsOut } = useAppSelector(selectCards)
+	const [cards, setCards] = useState<Card[][]>([[], [], [], []])
+	const [boardCards, setBoardCards] = useState<Card[]>([])
+	const [cardsOut, setCardsOut] = useState<Card[]>([])
 	// Zda hrac muze provest akci
 	const [canHeroAct, setCanHeroAct] = useState(true)
 	const [initPlayer, setInitPlayer] = useState(0)
@@ -41,7 +38,12 @@ export const Game = ({ playerNames }: GameProps) => {
 			// calculates villains count to act
 			const opponentsToAct = OPPONENTS_COUNT - initPlayerIndex
 			const card = chooseInitCard(initPlayerIndex, cards, boardCards, cardsOut)
-			dispatch(removeCard({ playerIndex: initPlayerIndex, card }))
+			setCards(cards =>
+				cards.map((c, idx) =>
+					idx === initPlayerIndex ? c.filter(c => c.id !== card.id) : c
+				)
+			)
+			setBoardCards(cards => cards.map(c => (c.id === card.id ? card : c)))
 
 			// forces opponents to make their initializing moves
 			for (let i = 1; i < opponentsToAct; i++) {
@@ -55,7 +57,12 @@ export const Game = ({ playerNames }: GameProps) => {
 					cardsOut,
 					initPlayer
 				)
-				dispatch(removeCard({ playerIndex: marginIndex, card }))
+				setCards(cards =>
+					cards.map((c, idx) =>
+						idx === marginIndex ? c.filter(c => c.id !== card.id) : c
+					)
+				)
+				setBoardCards(cards => cards.map(c => (c.id === card.id ? card : c)))
 			}
 			setCanHeroAct(true)
 		},
@@ -68,14 +75,18 @@ export const Game = ({ playerNames }: GameProps) => {
 		for (const i of opponentsToReact) {
 			await delay()
 			const card = chooseReactCard(i, cards, boardCards, cardsOut, initPlayer)
-			dispatch(removeCard({ playerIndex: i, card }))
+			setCards(cards =>
+				cards.map((c, idx) => (idx === i ? c.filter(c => c.id !== card.id) : c))
+			)
+			setBoardCards(cards => cards.map(c => (c.id === card.id ? card : c)))
 		}
 	}
 
 	// MOUNT
 	useEffect(() => {
 		// Inicializace karet
-		dispatch(shuffleCards())
+		const shuffledCards = shuffle(getCards())
+		setCards(chunk(shuffledCards, 8))
 
 		// Vynos protihracu
 		allOpponentsInit(round)
@@ -92,7 +103,10 @@ export const Game = ({ playerNames }: GameProps) => {
 		if (initPlayer !== 3 && !isFlushValid(card, heroCards, initCard)) return
 
 		// Odstrani danou kartu z hracova balicku a priradi do boardu
-		dispatch(removeCard({ playerIndex: 3, card }))
+		setCards(cards =>
+			cards.map((c, idx) => (idx === 3 ? c.filter(c => c.id !== card.id) : c))
+		)
+		setBoardCards(cards => cards.map(c => (c.id === card.id ? card : c)))
 		// Pozastavi moznost akce hrace
 		setCanHeroAct(false)
 		await allOpponentsReact()
@@ -108,11 +122,13 @@ export const Game = ({ playerNames }: GameProps) => {
 		})
 		await delay(2000)
 		// Vymaze karty z boardu
-		dispatch(clearBoard())
+		setBoardCards([])
+		setCardsOut(cards => [...cards, ...boardCards])
 
 		// konec hry
 		if (heroCards.length === 1) {
-			dispatch(shuffleCards())
+			const shuffledCards = shuffle(getCards())
+			setCards(chunk(shuffledCards, 8))
 			setInitPlayer(round)
 			setCurrentLoser(null)
 			if (round === 3) {
@@ -138,6 +154,7 @@ export const Game = ({ playerNames }: GameProps) => {
 				{[0, 1, 2].map(index => (
 					<DeckOpponent
 						key={index}
+						cards={cards}
 						playerNames={playerNames}
 						opponentIndex={index}
 						initPlayer={initPlayer}
@@ -145,8 +162,9 @@ export const Game = ({ playerNames }: GameProps) => {
 					/>
 				))}
 			</div>
-			<Board currentLoser={currentLoser} />
+			<Board currentLoser={currentLoser} boardCards={boardCards} />
 			<DeckHero
+				cards={cards}
 				currentHeroScore={currentScore.get(3) ?? 0}
 				initPlayer={initPlayer}
 				onClick={handleHeroClick}
