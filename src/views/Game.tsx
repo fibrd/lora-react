@@ -19,7 +19,6 @@ import {
 	setCurrentLoser,
 	setInitPlayer,
 } from '../store/slices/gameSlice'
-import { incrementCurrentScore } from '../store/slices/scoreSlice'
 
 const OPPONENTS_COUNT = 3
 
@@ -33,6 +32,14 @@ export const Game = ({ playerNames }: GameProps) => {
 	const { initPlayer, round } = useAppSelector(selectGame)
 	const { cards, boardCards } = useAppSelector(selectCards)
 	const [canHeroAct, setCanHeroAct] = useState(false)
+	const [currentScore, setCurrentScore] = useState(
+		new Map([
+			[0, 0],
+			[1, 0],
+			[2, 0],
+			[3, 0],
+		])
+	)
 
 	const allOpponentsInit = useCallback(
 		async (initPlayerIndex: number) => {
@@ -89,7 +96,11 @@ export const Game = ({ playerNames }: GameProps) => {
 		dispatch(setCurrentLoser({ playerIndex: loserIndex }))
 		// Nastavi vynasejiciho hrace
 		dispatch(setInitPlayer({ playerIndex: loserIndex }))
-		dispatch(incrementCurrentScore({ playerIndex: loserIndex }))
+		setCurrentScore(score => {
+			const scoreToUpdate = score.get(loserIndex) ?? 0
+			score.set(loserIndex, scoreToUpdate + 1)
+			return score
+		})
 		await delay(2000)
 		// Vymaze karty z boardu
 		dispatch(clearBoard())
@@ -124,11 +135,15 @@ export const Game = ({ playerNames }: GameProps) => {
 						key={index}
 						playerNames={playerNames}
 						opponentIndex={index}
+						currentScore={currentScore}
 					/>
 				))}
 			</div>
 			<Board />
-			<DeckHero onClick={handleHeroClick} />
+			<DeckHero
+				currentHeroScore={currentScore.get(3) ?? 0}
+				onClick={handleHeroClick}
+			/>
 		</div>
 	)
 }
