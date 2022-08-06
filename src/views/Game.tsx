@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { DeckHero } from '../components/DeckHero'
-import { useAppDispatch } from '../store/hooks'
 import { DeckOpponent } from '../components/DeckOpponent'
 import { Board } from '../components/Board'
 import { Card } from '../types'
@@ -15,7 +14,6 @@ interface GameProps {
 }
 
 export const Game = ({ playerNames }: GameProps) => {
-	const dispatch = useAppDispatch()
 	const [cards, setCards] = useState<Card[][]>([[], [], [], []])
 	const [boardCards, setBoardCards] = useState<Card[]>([])
 	const [cardsOut, setCardsOut] = useState<Card[]>([])
@@ -66,7 +64,7 @@ export const Game = ({ playerNames }: GameProps) => {
 			}
 			setCanHeroAct(true)
 		},
-		[dispatch, initPlayer]
+		[initPlayer]
 	)
 
 	// Reakce protihracu
@@ -90,7 +88,7 @@ export const Game = ({ playerNames }: GameProps) => {
 
 		// Vynos protihracu
 		allOpponentsInit(round)
-	}, [dispatch, allOpponentsInit, round])
+	}, [allOpponentsInit, round])
 
 	// Tah hrace
 	async function handleHeroClick(card: Card) {
