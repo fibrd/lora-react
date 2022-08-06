@@ -173,7 +173,6 @@ export function getCurrentLoser(state: RootState): number {
 	const { initPlayer } = state.game
 	// Karta vynosu
 	const initCard = boardCards[initPlayer]
-	console.log('initCard', initCard)
 
 	const boardEligable = boardCards.filter(c => c.flush === initCard.flush)
 	// ziska nejvyssi hodnotu na boardu

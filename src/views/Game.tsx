@@ -101,6 +101,7 @@ export const Game = () => {
 		if (heroCards.length === 1) {
 			dispatch(shuffleCards())
 			dispatch(setInitPlayer({ playerIndex: round }))
+			dispatch(setCurrentLoser({ playerIndex: -1 }))
 			if (round === 3) {
 				dispatch(enableActing())
 			} else {
