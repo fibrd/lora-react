@@ -12,7 +12,6 @@ import { useAppDispatch, useAppSelector } from '../store/hooks'
 import { DeckOpponent } from '../components/DeckOpponent'
 import { Board } from '../components/Board'
 import { Card } from '../types'
-import { disableActing, enableActing } from '../store/slices/commonSlice'
 import { delay, isFlushValid } from '../utils'
 import {
 	getLoserIndex,
@@ -47,7 +46,7 @@ export const Game = ({ playerNames }: GameProps) => {
 				await delay()
 				dispatch(opponentReacts(marginIndex))
 			}
-			dispatch(enableActing())
+			setCanHeroAct(true)
 		},
 		[dispatch]
 	)
@@ -83,7 +82,7 @@ export const Game = ({ playerNames }: GameProps) => {
 		// Odstrani danou kartu z hracova balicku a priradi do boardu
 		dispatch(removeCard({ playerIndex: 3, card }))
 		// Pozastavi moznost akce hrace
-		dispatch(disableActing())
+		setCanHeroAct(false)
 		await allOpponentsReact()
 		const loserIndex = dispatch(getLoserIndex()) as number
 		// Nastavi aktualniho losera
@@ -101,7 +100,7 @@ export const Game = ({ playerNames }: GameProps) => {
 			dispatch(setInitPlayer({ playerIndex: round }))
 			dispatch(setCurrentLoser({ playerIndex: -1 }))
 			if (round === 3) {
-				dispatch(enableActing())
+				setCanHeroAct(true)
 			} else {
 				allOpponentsInit(round)
 			}
@@ -110,7 +109,7 @@ export const Game = ({ playerNames }: GameProps) => {
 
 		if (loserIndex === 3) {
 			// Opetovne umozni moznost akce hrace
-			dispatch(enableActing())
+			setCanHeroAct(true)
 		} else {
 			// Vynos protihracu
 			allOpponentsInit(loserIndex)
