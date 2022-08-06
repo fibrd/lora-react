@@ -1,6 +1,7 @@
 import { Card } from '../types'
 import { RootState } from '../store/store'
 import { sortBy } from 'lodash'
+import { CardsState } from '../store/slices/cardsSlice'
 
 // Vybere nejvyssi kartu z vyfiltrovaneho serazeneho balicku
 function getTheHighestCard(deck: Card[]): Card {
@@ -168,9 +169,10 @@ export function chooseReactCard(playerIndex: number, state: RootState) {
 	return chooseUnfilteredCard(sortedDeck, activeBoardCards, cardsOut)
 }
 
-export function getCurrentLoser(state: RootState): number {
-	const { boardCards } = state.cards
-	const { initPlayer } = state.game
+export function getCurrentLoser(
+	boardCards: Card[],
+	initPlayer: number
+): number {
 	// Karta vynosu
 	const initCard = boardCards[initPlayer]
 

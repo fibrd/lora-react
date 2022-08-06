@@ -13,12 +13,7 @@ import { DeckOpponent } from '../components/DeckOpponent'
 import { Board } from '../components/Board'
 import { Card } from '../types'
 import { delay, isFlushValid } from '../utils'
-import {
-	getLoserIndex,
-	selectGame,
-	setCurrentLoser,
-	setInitPlayer,
-} from '../store/slices/gameSlice'
+import { getCurrentLoser } from '../gameplay'
 
 const OPPONENTS_COUNT = 3
 
@@ -28,10 +23,12 @@ interface GameProps {
 
 export const Game = ({ playerNames }: GameProps) => {
 	const dispatch = useAppDispatch()
-	// Zda hrac muze provest akci
-	const { initPlayer, round } = useAppSelector(selectGame)
 	const { cards, boardCards } = useAppSelector(selectCards)
+	// Zda hrac muze provest akci
 	const [canHeroAct, setCanHeroAct] = useState(false)
+	const [initPlayer, setInitPlayer] = useState(0)
+	const [currentLoser, setCurrentLoser] = useState<null | number>(null)
+	const [round, setRound] = useState(0)
 	const [currentScore, setCurrentScore] = useState(
 		new Map([
 			[0, 0],
@@ -91,11 +88,11 @@ export const Game = ({ playerNames }: GameProps) => {
 		// Pozastavi moznost akce hrace
 		setCanHeroAct(false)
 		await allOpponentsReact()
-		const loserIndex = dispatch(getLoserIndex()) as number
+		const loserIndex = getCurrentLoser(boardCards, initPlayer)
 		// Nastavi aktualniho losera
-		dispatch(setCurrentLoser({ playerIndex: loserIndex }))
+		setCurrentLoser(loserIndex)
 		// Nastavi vynasejiciho hrace
-		dispatch(setInitPlayer({ playerIndex: loserIndex }))
+		setInitPlayer(loserIndex)
 		setCurrentScore(score => {
 			const scoreToUpdate = score.get(loserIndex) ?? 0
 			score.set(loserIndex, scoreToUpdate + 1)
@@ -108,8 +105,8 @@ export const Game = ({ playerNames }: GameProps) => {
 		// konec hry
 		if (heroCards.length === 1) {
 			dispatch(shuffleCards())
-			dispatch(setInitPlayer({ playerIndex: round }))
-			dispatch(setCurrentLoser({ playerIndex: -1 }))
+			setInitPlayer(round)
+			setCurrentLoser(null)
 			if (round === 3) {
 				setCanHeroAct(true)
 			} else {
@@ -139,7 +136,7 @@ export const Game = ({ playerNames }: GameProps) => {
 					/>
 				))}
 			</div>
-			<Board />
+			<Board currentLoser={currentLoser} />
 			<DeckHero
 				currentHeroScore={currentScore.get(3) ?? 0}
 				onClick={handleHeroClick}
