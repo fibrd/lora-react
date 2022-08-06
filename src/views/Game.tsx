@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { DeckHero } from '../components/DeckHero'
 import {
 	clearBoard,
@@ -11,13 +11,8 @@ import {
 import { useAppDispatch, useAppSelector } from '../store/hooks'
 import { DeckOpponent } from '../components/DeckOpponent'
 import { Board } from '../components/Board'
-import { setPlayerNames } from '../store/slices/nameSlice'
 import { Card } from '../types'
-import {
-	disableActing,
-	enableActing,
-	selectCommon,
-} from '../store/slices/commonSlice'
+import { disableActing, enableActing } from '../store/slices/commonSlice'
 import { delay, isFlushValid } from '../utils'
 import {
 	getLoserIndex,
@@ -29,12 +24,16 @@ import { incrementCurrentScore } from '../store/slices/scoreSlice'
 
 const OPPONENTS_COUNT = 3
 
-export const Game = () => {
+interface GameProps {
+	playerNames: string[]
+}
+
+export const Game = ({ playerNames }: GameProps) => {
 	const dispatch = useAppDispatch()
 	// Zda hrac muze provest akci
-	const { canHeroAct } = useAppSelector(selectCommon)
 	const { initPlayer, round } = useAppSelector(selectGame)
 	const { cards, boardCards } = useAppSelector(selectCards)
+	const [canHeroAct, setCanHeroAct] = useState(false)
 
 	const allOpponentsInit = useCallback(
 		async (initPlayerIndex: number) => {
@@ -66,8 +65,7 @@ export const Game = () => {
 	useEffect(() => {
 		// Inicializace karet
 		dispatch(shuffleCards())
-		// Nastaveni jmen protihracu pri inicializaci
-		dispatch(setPlayerNames())
+
 		// Vynos protihracu
 		allOpponentsInit(round)
 	}, [dispatch, allOpponentsInit, round])
@@ -123,7 +121,11 @@ export const Game = () => {
 		<div className="game-area">
 			<div className="opponents-wrapper">
 				{[0, 1, 2].map(index => (
-					<DeckOpponent key={index} opponentIndex={index} />
+					<DeckOpponent
+						key={index}
+						playerNames={playerNames}
+						opponentIndex={index}
+					/>
 				))}
 			</div>
 			<Board />

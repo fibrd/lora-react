@@ -3,18 +3,20 @@ import { selectCards } from '../store/slices/cardsSlice'
 import { useAppSelector } from '../store/hooks'
 import { selectScore } from '../store/slices/scoreSlice'
 import clsx from 'clsx'
-import { selectName } from '../store/slices/nameSlice'
 import { selectGame } from '../store/slices/gameSlice'
 
 interface DeckOpponentProps {
+	playerNames: string[]
 	opponentIndex: number
 }
 
 // const CARD_BACK_SRC = '/assets/cardsmini/back.jpg'
 
-export const DeckOpponent = ({ opponentIndex }: DeckOpponentProps) => {
+export const DeckOpponent = ({
+	playerNames,
+	opponentIndex,
+}: DeckOpponentProps) => {
 	const { cards } = useAppSelector(selectCards)
-	const { playerNames } = useAppSelector(selectName)
 	const { currentScore } = useAppSelector(selectScore)
 	const { initPlayer } = useAppSelector(selectGame)
 	const opponentCards = useMemo(
